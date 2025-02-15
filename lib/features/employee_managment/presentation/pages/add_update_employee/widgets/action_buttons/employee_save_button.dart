@@ -17,7 +17,12 @@ class EmployeeSaveButton extends StatelessWidget {
       onTap: () {
         final employeeCubit = context.read<EmployeeCubit>();
 
-        if (!employeeCubit.validateFields()) return;
+        if (!employeeCubit.validateFields()) {
+          ScaffoldMessenger.of(context).clearSnackBars();
+          ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text("Please fill all required field")));
+          return;
+        }
 
         final employee = EmployeeEntity(
           id: employeeEntity?.id,
@@ -26,7 +31,11 @@ class EmployeeSaveButton extends StatelessWidget {
           startDate: DateTime.parse(employeeCubit.state.startDate!),
           endDate: DateTime.tryParse(employeeCubit.state.endDate ?? ""),
         );
-        context.read<EmployeeBloc>().add(UpdateEmployee(employee: employee));
+        if (employeeEntity == null) {
+          context.read<EmployeeBloc>().add(AddEmployee(employee: employee));
+        } else {
+          context.read<EmployeeBloc>().add(UpdateEmployee(employee: employee));
+        }
         context.pop();
       },
     );

@@ -22,7 +22,8 @@ class AllEmployees extends StatelessWidget {
               return Center(child: CircularProgressIndicator());
             } else if (state is EmployeeFetched) {
               if ((state.currentEmpList ?? []).isEmpty &&
-                  (state.previousEmployees ?? []).isEmpty) {
+                  (state.previousEmployees ?? []).isEmpty &&
+                  (state.upcomingEmpList ?? []).isEmpty) {
                 return NoRecordFound();
               }
               return HomeDataLoaded(

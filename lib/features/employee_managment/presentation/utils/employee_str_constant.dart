@@ -4,6 +4,7 @@ class EmpStrConst {
   static const String deletedNote = "Employee data has been deleted";
   static const String undo = "Undo";
   static const String prevEmp = "Previous Employees";
+  static const String upEmp = "Upcoming Employees";
   static const String curEmp = "Current Employees";
   static const String empList = "Employee List";
   static const String selRole = "Select role";

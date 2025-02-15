@@ -1,5 +1,4 @@
 import 'package:employee_app/features/employee_managment/data/model/employee.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 
 class DatabaseHelper {
@@ -22,8 +21,9 @@ class DatabaseHelper {
   }
 
   Future<Database> initDB() async {
-    final documentsDirectory = await getApplicationDocumentsDirectory();
-    final path = '${documentsDirectory.path}/employees.db';
+    final documentsDirectory = await getDatabasesPath();
+    print(documentsDirectory);
+    final path = '$documentsDirectory/employees.db';
 
     return await openDatabase(
       path,

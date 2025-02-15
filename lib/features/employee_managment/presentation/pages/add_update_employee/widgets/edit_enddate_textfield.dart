@@ -26,19 +26,21 @@ class EditEnddateTextfield extends StatelessWidget {
             prefixIcon: ImagePath.event,
             placeholder: "No date",
             onTap: () async {
-              final String? date = await datePickerDialog(
-                context,
-                showNextMonday: false,
-                showNextTuesday: false,
-                showNextWeek: false,
-                showNoDate: true,
-                selectedDate: DateTime.tryParse(dates.$2 ?? ""),
-                startDate: DateTime.tryParse(dates.$1 ?? ""),
-              );
-              if (date != null &&
-                  date != EmpStrConst.noDate &&
-                  context.mounted) {
+              if (dates.$1 != null && (dates.$1 ?? "").isNotEmpty) {
+                final String? date = await datePickerDialog(
+                  context,
+                  showNextMonday: false,
+                  showNextTuesday: false,
+                  showNextWeek: false,
+                  showNoDate: true,
+                  selectedDate: DateTime.tryParse(dates.$2 ?? ""),
+                  startDate: DateTime.tryParse(dates.$1 ?? ""),
+                );
                 context.read<EmployeeCubit>().updateEndDate(date);
+              } else {
+                ScaffoldMessenger.of(context).clearSnackBars();
+                ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text("Select Start Date first")));
               }
             },
           );

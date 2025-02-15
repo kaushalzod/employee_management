@@ -13,6 +13,7 @@ Future<String?> datePickerDialog(
   BuildContext context, {
   DateTime? selectedDate,
   DateTime? startDate,
+  DateTime? endDate,
   bool showNoDate = false,
   bool showNextMonday = true,
   bool showNextTuesday = true,
@@ -43,6 +44,7 @@ class DatePicker extends StatefulWidget {
   const DatePicker(
       {super.key,
       this.startDate,
+      this.endDate,
       this.selectedDate,
       this.showNoDate = false,
       this.showNextMonday = true,
@@ -51,6 +53,7 @@ class DatePicker extends StatefulWidget {
       this.onSelect});
   final DateTime? selectedDate;
   final DateTime? startDate;
+  final DateTime? endDate;
   final bool showNoDate;
   final bool showNextMonday;
   final bool showNextTuesday;

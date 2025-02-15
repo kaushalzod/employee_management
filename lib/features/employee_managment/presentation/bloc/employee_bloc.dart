@@ -18,6 +18,9 @@ class EmployeeBloc extends Bloc<EmployeeEvent, EmployeeState> {
     on<DeleteEmployee>(deleteEmployees);
   }
 
+  // Helper to get only the date part (year, month, day)
+  DateTime dateOnly(DateTime dt) => DateTime(dt.year, dt.month, dt.day);
+
   void fetchEmployees(FetchEmployees event, Emitter<EmployeeState> emit) async {
     emit(EmployeeLoading());
     final FetchEmployeeUseCase fetchEmployeeUseCase =
@@ -25,25 +28,45 @@ class EmployeeBloc extends Bloc<EmployeeEvent, EmployeeState> {
     final dataState = await fetchEmployeeUseCase.execute();
 
     if (dataState is DataSucess && dataState.data!.isNotEmpty) {
-      final today = DateTime.now();
+      final todayDate = dateOnly(DateTime.now());
 
       final currentEmployees = dataState.data!.where((emp) {
-        final startDate = emp.startDate;
-        final endDate = emp.endDate;
-        return startDate.isBefore(today) &&
-            (endDate == null || endDate.isAfter(today));
+        final startDateOnly = dateOnly(emp.startDate);
+        final endDateOnly = emp.endDate != null ? dateOnly(emp.endDate!) : null;
+
+        // Current if:
+        // 1. Start date is before or equal to today AND
+        // 2. End date is either null or after or equal to today.
+        return (startDateOnly.isBefore(todayDate) ||
+                startDateOnly.isAtSameMomentAs(todayDate)) &&
+            (endDateOnly == null ||
+                endDateOnly.isAfter(todayDate) ||
+                endDateOnly.isAtSameMomentAs(todayDate));
       }).toList();
 
       final previousEmployees = dataState.data!.where((emp) {
         final endDate = emp.endDate;
-        return endDate != null && endDate.isBefore(today);
+        if (endDate == null) return false;
+        final endDateOnly = dateOnly(endDate);
+        return endDateOnly.isBefore(todayDate);
       }).toList();
 
-      emit(EmployeeFetched(currentEmployees, previousEmployees));
+      final upcomingEmployees = dataState.data!.where((emp) {
+        final startDateOnly = dateOnly(emp.startDate);
+        // Upcoming if start date is after today.
+        return startDateOnly.isAfter(todayDate);
+      }).toList();
+
+      print(currentEmployees);
+      print(previousEmployees);
+      print(upcomingEmployees);
+
+      emit(EmployeeFetched(
+          currentEmployees, previousEmployees, upcomingEmployees));
     } else if (dataState is DataFailed) {
       emit(EmployeeError(dataState.error!));
     } else {
-      emit(EmployeeFetched([], []));
+      emit(EmployeeFetched([], [], []));
     }
   }
 

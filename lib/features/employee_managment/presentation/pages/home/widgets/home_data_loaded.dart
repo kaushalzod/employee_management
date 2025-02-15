@@ -24,7 +24,7 @@ class HomeDataLoaded extends StatelessWidget {
                 ...(state.currentEmpList ?? []).map(
                   (employee) => EmployeeTile(
                     employee,
-                    onDelete: (val) => _onDelete.call(context, val),
+                    onDelete: (val) => _onDelete.call(scaffoldContext, val),
                   ),
                 ),
               ],
@@ -36,7 +36,20 @@ class HomeDataLoaded extends StatelessWidget {
                   (employee) {
                     return EmployeeTile(
                       employee,
-                      onDelete: (val) => _onDelete(context, val),
+                      onDelete: (val) => _onDelete(scaffoldContext, val),
+                    );
+                  },
+                ),
+              ],
+
+              // Upcoming Employees Section
+              if ((state.upcomingEmpList ?? []).isNotEmpty) ...[
+                EmployeeTypeDivider(title: EmpStrConst.upEmp),
+                ...(state.upcomingEmpList ?? []).map(
+                  (employee) {
+                    return EmployeeTile(
+                      employee,
+                      onDelete: (val) => _onDelete(scaffoldContext, val),
                     );
                   },
                 ),
@@ -51,7 +64,8 @@ class HomeDataLoaded extends StatelessWidget {
 
   void _onDelete(BuildContext context, value) {
     context.read<EmployeeBloc>().add(DeleteEmployee(employee: value));
-    ScaffoldMessenger.of(scaffoldContext).showSnackBar(SnackBar(
+    ScaffoldMessenger.of(context).clearSnackBars();
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: Text(EmpStrConst.deletedNote),
       action: SnackBarAction(
         label: EmpStrConst.undo,

@@ -9,7 +9,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initDependency();
-
   DatabaseHelper.instance;
   runApp(const MyApp());
 }
@@ -22,6 +21,7 @@ class MyApp extends StatelessWidget {
     return BlocProvider<EmployeeBloc>(
       create: (context) => getIt(),
       child: MaterialApp(
+        debugShowCheckedModeBanner: false,
         title: 'Flutter Demo',
         theme: ThemeData(
           colorScheme: ColorScheme.light(
